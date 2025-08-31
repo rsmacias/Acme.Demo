@@ -14,10 +14,12 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.4.0" />
     <PackageReference Include="Aspire.Hosting.SqlServer" Version="9.4.1" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.SqlDatabaseProjects" Version="9.7.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Demo.Api\Demo.Api.csproj" />
+    <ProjectReference Include="..\Demo.Database\Demo.Database.csproj" />
   </ItemGroup>
 
 </Project>

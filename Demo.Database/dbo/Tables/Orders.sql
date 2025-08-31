@@ -1,15 +1,14 @@
-﻿CREATE TABLE Customers (
+﻿CREATE TABLE Orders (
 	[Id] [bigint] NOT NULL,
-	[Name] [varchar](50) NOT NULL,
-	[LastName] [varchar](50) NULL,
+	[CustomerId] [bigint] NOT NULL,
 	[City] [varchar](50) NULL,
 	[Street] [varchar](100) NULL,
 	[ZipCode] [varchar](10) NULL,
-	[Email] [varchar](50) NULL,
-	[CreatedOn] [datetimeoffset](7) NOT NULL,
-	[UpdatedOn] [datetimeoffset](7) NULL,
+	[CreationDate] [date] NULL,
+	[ShippingDate] [date] NULL,
+	[Total] [numeric](10,2) NULL,
 
-	CONSTRAINT [PK_Customers] PRIMARY KEY CLUSTERED 
+	CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
 	(
 		[Id] ASC
 	)  WITH (
@@ -21,4 +20,8 @@
 		OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF
 	) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [FK_Orders_Customers] FOREIGN KEY([CustomerId])
+REFERENCES [dbo].[Customers] ([Id])
 GO

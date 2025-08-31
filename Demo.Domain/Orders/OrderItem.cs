@@ -2,6 +2,7 @@
 
 public class OrderItem
 {
+    public int Id { get; private set; }
     public long OrderId { get; private set; }
     public Order Order { get; private set; } // Navigation Property
     public string Product { get; private set; }

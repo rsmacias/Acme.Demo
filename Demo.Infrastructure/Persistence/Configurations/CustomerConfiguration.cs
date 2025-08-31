@@ -40,7 +40,7 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.OwnsOne(x => x.Email, emailBuilder =>
         {
             emailBuilder.Property(x => x.Value)
-                .HasColumnName("email");
+                .HasColumnName("Email");
         });
 
         builder.Property(x => x.CreatedOn)
