@@ -1,6 +1,8 @@
-﻿using Demo.Domain.Customers;
+﻿using Demo.Domain.Abstractions;
+using Demo.Domain.Customers;
 using Demo.Domain.Shared;
 using MediatR;
+using System.Security.AccessControl;
 
 namespace Demo.Application.Features.Customers.CreateCustomers;
 
@@ -29,10 +31,12 @@ public class CreateCustomerResponse
 public sealed class CreateCustomerHandler : IRequestHandler<CreateCustomerRequest, CreateCustomerResponse>
 {
     private readonly ICustomerRepository _customerRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CreateCustomerHandler(ICustomerRepository customerRepository)
+    public CreateCustomerHandler(ICustomerRepository customerRepository, IUnitOfWork unitOfWork)
     {
         _customerRepository = customerRepository;
+        _unitOfWork = unitOfWork;
     }
 
     //public void Handle(CreateCustomerRequest request)
@@ -60,7 +64,7 @@ public sealed class CreateCustomerHandler : IRequestHandler<CreateCustomerReques
     //        throw;
     //    }
     //}
-    public Task<CreateCustomerResponse> Handle(CreateCustomerRequest request, CancellationToken cancellationToken)
+    public async Task<CreateCustomerResponse> Handle(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -70,7 +74,27 @@ public sealed class CreateCustomerHandler : IRequestHandler<CreateCustomerReques
 
             var customer = Customer.Create(request.Name, request.LastName, customerAddress, customerEmail);
 
-            return Task.FromResult<CreateCustomerResponse>(new CreateCustomerResponse());
+            var existingCustomer = await _customerRepository.GetCustomerByEmailAsync(customerEmail);
+
+            if(existingCustomer is not null)
+            {
+                throw new Exception("Customer already exists");
+            }
+
+            _customerRepository.Add(customer);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return new CreateCustomerResponse()
+            {
+                Id = customer.Id,
+                Name = customer.Name,
+                LastName = customer.LastName,
+                Email = customer.Email.Value,
+                StreetAddress = customer.Address.Street,
+                StreetCity = customer.Address.City,
+                StreetZipCode = customer.Address.ZipCode
+            };
         }
         catch (Exception ex)
         {

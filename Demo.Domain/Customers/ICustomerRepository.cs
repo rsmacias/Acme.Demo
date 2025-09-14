@@ -4,5 +4,5 @@ namespace Demo.Domain.Customers;
 
 public interface ICustomerRepository : IRepository<Customer>
 {
-    Task<string?> GetCustomerNameAsync();
+    Task<Customer?> GetCustomerByEmailAsync(Email email);
 }

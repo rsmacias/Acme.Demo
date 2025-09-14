@@ -1,44 +1,23 @@
 ﻿using Demo.Domain.Customers;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Demo.Infrastructure.Persistence.Repositories;
 
-internal class CustomerRepository : ICustomerRepository
+internal class CustomerRepository : Repository<Customer>, ICustomerRepository
 {
     private readonly DemoContext context;
 
-    public CustomerRepository(DemoContext context)
+    public CustomerRepository(DemoContext context) : base(context)
     {
         this.context = context;
     }
 
-    public void Add(Customer entity)
+    public Task<Customer?> GetCustomerByEmailAsync(Email email)
     {
-        throw new NotImplementedException();
-    }
+        var query = _context.Customers
+            .Where(x => x.Email == email);
 
-    public void AddMany(IEnumerable<Customer> entities)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool Any(Expression<Func<Customer, bool>> predicate)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(Customer entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<string?> GetCustomerNameAsync()
-    {
-        return "Hello";
-    }
-
-    public void Update(Customer entity)
-    {
-        throw new NotImplementedException();
+        return query.FirstOrDefaultAsync();
     }
 }
