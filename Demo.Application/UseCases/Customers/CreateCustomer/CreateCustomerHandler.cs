@@ -2,7 +2,7 @@
 using Demo.Domain.Customers;
 using Demo.Domain.Shared;
 using MediatR;
-using System.Security.AccessControl;
+using FluentValidation;
 
 namespace Demo.Application.Features.Customers.CreateCustomers;
 
@@ -25,6 +25,24 @@ public class CreateCustomerResponse
     public string StreetZipCode { get; set; }
     public string StreetCity { get; set; }
     public string Email { get; set; }
+}
+
+
+public class CreateCustomerValidator : AbstractValidator<CreateCustomerRequest>
+{
+    public CreateCustomerValidator()
+    {
+        RuleFor(x => x.Name)
+            .MaximumLength(50)
+            .NotEmpty();
+
+        RuleFor(x => x.StreetCity)
+            .NotEmpty();
+
+        RuleFor(x => x.Email)
+            .MaximumLength(50)
+            .NotEmpty();
+    }
 }
 
 

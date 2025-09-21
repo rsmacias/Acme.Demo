@@ -1,4 +1,7 @@
-﻿using Demo.Infrastructure.Persistence;
+﻿using Demo.Domain.Abstractions;
+using Demo.Domain.Customers;
+using Demo.Infrastructure.Persistence;
+using Demo.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +15,12 @@ public static class ConfigurationServices
         var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__AcmeDb") ?? configuration.GetConnectionString("AcmeDb");
 
         services.AddDbContext<DemoContext>(options => options.UseSqlServer(connectionString));
+
+        services.AddScoped<IUnitOfWork>(x => new UnitOfWork(x.GetRequiredService<DemoContext>()));
+
+        // Register Repositories
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+
 
         return services;
     }
